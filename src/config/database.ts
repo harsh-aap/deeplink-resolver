@@ -8,7 +8,7 @@ export const sequelize = new Sequelize(
   {
     host: env.DB_HOST,
     dialect: 'postgres',
-    logging: false
+    logging: env.NODE_ENV === 'development' ? console.log : false
   }
 );
 

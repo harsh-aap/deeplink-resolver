@@ -5,12 +5,17 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec \"ts-node src/server.ts\"",
+    "dev": "nodemon --watch src --ext ts,js,json --exec \"node --loader ts-node/esm src/server.ts\"",
     "build": "tsc",
     "start": "node dist/server.js",
-    "db:migrate": "npx sequelize-cli db:migrate",
-    "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
-    "db:seed": "npx sequelize-cli db:seed:all"
+    "start:prod": "pm2 start ecosystem.config.js --env production",
+    "stop": "pm2 stop ecosystem.config.js",
+    "restart": "pm2 restart ecosystem.config.js",
+    "logs": "pm2 logs deeplink-resolver",
+    "status": "pm2 status",
+    "db:migrate": "npm run build && npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npm run build && npx sequelize-cli db:migrate:undo",
+    "db:seed": "npm run build && npx sequelize-cli db:seed:all"
   },
   "repository": {
     "type": "git",
@@ -45,6 +50,7 @@
     "@types/node": "^25.2.3",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
+    "pm2": "^6.0.14",
     "sequelize-cli": "^6.6.5",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
