@@ -2,7 +2,7 @@ module.exports = {
     apps: [{
         name: 'deeplink-resolver',
         script: './dist/server.js',
-        instances: 2,
+        instances: 'max-1',
         exec_mode: 'cluster',
         autorestart: true,
         watch: false,

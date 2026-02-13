@@ -8,7 +8,13 @@ export const sequelize = new Sequelize(
   {
     host: env.DB_HOST,
     dialect: 'postgres',
-    logging: env.NODE_ENV === 'development' ? console.log : false
+    logging: env.NODE_ENV === 'development' ? console.log : false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // For AWS RDS
+      }
+    }
   }
 );
 
