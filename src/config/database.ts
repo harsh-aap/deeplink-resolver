@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import { env } from './env';
 
-export const sequelize = new Sequelize(
+export const db = new Sequelize(
   env.DB_NAME,
   env.DB_USER,
   env.DB_PASS,

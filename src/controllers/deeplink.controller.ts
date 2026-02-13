@@ -1,6 +1,0 @@
-import { Request, Response } from 'express';
-
-export const healthCheck = (req: Request, res: Response) => {
-  res.json({ status: 'OK', message: 'DeepLink Service Running 🚀' });
-};
-
