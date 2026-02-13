@@ -17,4 +17,5 @@ export const db = new Sequelize(
     }
   }
 );
-
+// Export as 'sequelize' for backward compatibility
+export const sequelize = db;

@@ -1,36 +1,38 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Req,
-  Body,
-  Res,
-} from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { DeeplinkService } from '../deeplink.service';
 
-@Controller('deeplink')
-export class DeeplinkController {
-  constructor(private readonly deeplinkService: DeeplinkService) {}
+const deeplinkService = new DeeplinkService(); // instantiate the service
 
+// ---------------------------------------------------
+// Resolve Deeplink
+// Equivalent of GET /deeplink/d/:code
+// ---------------------------------------------------
+export const resolveDeeplink = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    console.log("Route hit, client IP:", req.ip);
 
-  // GET /deeplink/d/:code
-  @Get('d/:code')
-  async resolveDeeplink(
-    @Param('code') code: string,
-    @Req() req: Request,
-  ) {
-    return this.deeplinkService.resolveDeeplink({
-      code,
-      ip: req.ip ?? '',
-      userAgent: req.headers['user-agent'],
+    const destination = await deeplinkService.resolveDeeplink({
+      code: req.params.code as string || '',
+      ip: req.ip || '',
+      userAgent: req.headers['user-agent'] as string,
     });
-  }
 
-  // POST /deeplink/conversion
-  @Post('conversion')
-  async trackConversion(@Body() body: any) {
-    return this.deeplinkService.trackConversion(body);
+    // Redirect user to the destination URL
+    res.redirect(destination);
+  } catch (error) {
+    next(error); // forward errors to error-handling middleware
   }
-}
+};
+
+// ---------------------------------------------------
+// Track Conversion
+// Equivalent of POST /deeplink/conversion
+// ---------------------------------------------------
+export const trackConversion = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await deeplinkService.trackConversion(req.body);
+    res.json(result); // return JSON response
+  } catch (error) {
+    next(error); // forward errors to error-handling middleware
+  }
+};

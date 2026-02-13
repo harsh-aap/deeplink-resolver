@@ -2,13 +2,10 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { db } from '../config/database';
 import { redis } from '../config/redis.helper';
 import * as geoip from 'geoip-lite';
-import { Sequelize } from 'sequelize';
-
+import { QueryTypes } from 'sequelize';
 
 @Injectable()
 export class DeeplinkService {
-
-
   /* ---------------------------------------------------
    * Helper: Weighted A/B variant picker
    * --------------------------------------------------- */
@@ -60,7 +57,7 @@ export class DeeplinkService {
     if (link) {
       link = JSON.parse(link);
     } else {
-      const [result] = await db.query(
+      const result: any = await db.query(
         `
         SELECT d.*, c.id AS campaign_id
         FROM deeplinks d
@@ -73,7 +70,8 @@ export class DeeplinkService {
         `,
         {
           replacements: { code },
-          type: Sequelize.QueryTypes.SELECT,
+          type: QueryTypes.SELECT,
+          plain: true,
         },
       );
 
@@ -90,7 +88,7 @@ export class DeeplinkService {
     /* ---------------------------------------------------
      * 3️⃣ A/B variant selection
      * --------------------------------------------------- */
-    const variants: any[] = await db.sequelize.query(
+    const variants: any[] = await db.query(
       `
       SELECT *
       FROM deeplink_ab_variants
@@ -98,7 +96,7 @@ export class DeeplinkService {
       `,
       {
         replacements: { deeplink_id: link.id },
-        type: Sequelize.QueryTypes.SELECT,
+        type: QueryTypes.SELECT,
       },
     );
 
@@ -156,7 +154,7 @@ export class DeeplinkService {
           },
         },
       )
-      .catch((err:any) => {
+      .catch((err: any) => {
         console.error('Deeplink analytics insert failed', err);
       });
 
@@ -188,7 +186,7 @@ export class DeeplinkService {
       throw new BadRequestException('Missing required conversion fields');
     }
 
-    await db.sequelize.query(
+    await db.query(
       `
       INSERT INTO deeplink_conversions
         (
