@@ -9,7 +9,7 @@ router.get('/health', (req, res) => {
 
 // Resolve deeplink
 // GET /api/deeplink/d/:code
-router.get('/d/:code', resolveDeeplink);
+router.get('/dl/:code', resolveDeeplink);
 
 // Track conversion
 // POST /api/deeplink/conversion
